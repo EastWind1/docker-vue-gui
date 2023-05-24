@@ -119,12 +119,23 @@ export async function searchImages(keyWord: string): Promise<DockerSearchedImage
   }
 }
 /**
- * 获取响应式界面大小
+ * 运行Image
  */
-export const bound = reactive({width: document.documentElement.clientHeight, height: document.documentElement.clientWidth});
-ipcRenderer.on('window-resize', (event,value) => {
-  
-  bound.height = document.documentElement.clientHeight;
-  bound.width = document.documentElement.clientWidth;
-  console.log(bound.height,bound.width);
-})
+export async function runImage(name: string) {
+  if (!await isDockerRunning()) {
+    ElNotification({ duration: 5000, type: 'error', title: 'docker daemon未在运行', showClose: true });
+  } else {
+    const loading = ElLoading.service({});
+    let res = '';
+    try {
+      res = await execCmd(`docker run -P -d ${name}`);
+    } finally {
+      loading.close();
+    }
+    if (res || res.includes("done")) {
+      ElNotification({ duration: 2000, type: 'success', title: `${name}启动成功` });
+    } else {
+      ElNotification({ duration: 0, type: 'error', title: `${name}启动失败: ` + res, showClose: true });
+    }
+  }
+}

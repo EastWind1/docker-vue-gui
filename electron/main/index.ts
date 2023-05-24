@@ -74,10 +74,6 @@ async function createWindow() {
     return { action: 'deny' }
   })
   // win.webContents.on('will-navigate', (event, url) => { }) #344
-  // 向渲染进程发送窗口大小
-  win.on('resize', () => {
-    win.webContents.send('window-resize', {width: win.getBounds().width, height: win.getBounds().height});
-  })
 }
 
 app.whenReady().then(createWindow)

@@ -1,6 +1,6 @@
 # docker-vue-gui
 
-docker桌面GUI，用于Docker Desktop for Mac的开源替代
+docker桌面GUI，用于学习Docker、Vue、Electron
 
 # 技术栈
 
