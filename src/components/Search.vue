@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Ref, onMounted, ref } from 'vue';
-import { searchImages } from '../api/node-api';
+import { searchImages, runImage } from '../api/node-api';
 import { DockerSearchedImage } from '../pojo/types';
 import { ElNotification } from 'element-plus';
 
@@ -22,19 +22,24 @@ onMounted(() => {
  */
 async function search() {
   if (!keyWord.value) {
-    ElNotification({ duration: 5000, type: 'error', title: '请输入镜像关键词', showClose: true });
+    ElNotification({ duration: 5000, type: 'error', title: 'Please Enter keyword', showClose: true });
   }
   images.value = await searchImages(keyWord.value);
 }
 
-async function runImage(name: string) {
-  console.log(name);
+async function runSelectImage(name: string) {
+  const res = await runImage(name);
+  if (res) {
+    ElNotification({ duration: 2000, type: 'success', title: 'Image start successful' });
+  } else {
+    ElNotification({ duration: 2000, type: 'error', title: 'Image start failed' });
+  }
 }
 </script>
 
 <template>
   <div>
-    <el-input v-model="keyWord" placeholder="请输入镜像关键词" @keyup.enter="search" />
+    <el-input v-model="keyWord" placeholder="Please Enter keyword" @keyup.enter="search" />
     <el-table :data="images" highlight-current-row style="width: 100%" :max-height="bound.height - 50">
       <el-table-column type="index" width="50" />
       <el-table-column property="Name" label="Name" />
@@ -44,7 +49,7 @@ async function runImage(name: string) {
       <el-table-column property="IsAutomated" label="Automated" />
       <el-table-column label="Operation">
         <template #default="scope">
-          <el-link type="primary" @click="runImage(scope.row.Name)">Run</el-link>
+          <el-link type="primary" @click="runSelectImage(scope.row.Name)">Run</el-link>
         </template>
       </el-table-column>
     </el-table>

@@ -120,7 +120,7 @@ ipcMain.handle('open-win', (_, arg) => {
 // 调用终端执行命令
 ipcMain.handle('invoke-cmd', (_, args) => {
   return new Promise((resolve, reject) => {
-    exec(args, {encoding:'utf-8', env: process.env}, (error, stdout, stderr) => {
+    let process = exec(args, (error, stdout, stderr) => {
       if (error) {
         resolve(error.message);
       } else {
@@ -130,6 +130,12 @@ ipcMain.handle('invoke-cmd', (_, args) => {
           resolve(stderr);
         }
       }
+    });
+    process.stdout.on('data', (data) => {
+      win.webContents.send('cmd-output', data);
+    });
+    process.stderr.on('data', (data) => {
+      win.webContents.send('cmd-output', data);
     });
   });
 });
