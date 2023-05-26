@@ -30,7 +30,7 @@ export async function getDockerInfo(): Promise<DockerState | null> {
     const json = await execCmd("docker info --format json");
     const jsonArray = json.split('\n');
     if (jsonArray[0]) {
-    return JSON.parse(jsonArray[0]);
+      return JSON.parse(jsonArray[0]);
     } else {
       return null;
     }
@@ -132,10 +132,54 @@ export async function runImage(name: string) {
     } finally {
       loading.close();
     }
-    if (res || res.includes("done")) {
+    if (res) {
       ElNotification({ duration: 2000, type: 'success', title: `${name}启动成功` });
     } else {
-      ElNotification({ duration: 0, type: 'error', title: `${name}启动失败: ` + res, showClose: true });
+      ElNotification({ duration: 0, type: 'error', title: `${name}启动失败`, showClose: true });
+    }
+  }
+}
+/**
+ * 停止Container
+ */
+export async function stopContainer(id: string) {
+  if (!await isDockerRunning()) {
+    ElNotification({ duration: 5000, type: 'error', title: 'docker daemon未在运行', showClose: true });
+  } else {
+    const loading = ElLoading.service({});
+    let res = '';
+    try {
+      res = await execCmd(`docker stop ${id}`);
+    } finally {
+      loading.close();
+    }
+    if (res) {
+      ElNotification({ duration: 2000, type: 'success', title: `停止成功` });
+    } else {
+      ElNotification({ duration: 0, type: 'error', title: `停止失败`, showClose: true });
+    }
+  }
+}
+/**
+ * 打开容器命令行
+ */
+export async function openContainerBash(id: string) {
+  if (!await isDockerRunning()) {
+    ElNotification({ duration: 5000, type: 'error', title: 'docker daemon未在运行', showClose: true });
+  } else {
+    const loading = ElLoading.service({});
+    let res = '';
+    try {
+      if (!window.navigator.userAgent.toLowerCase().includes("macintosh")) {
+        ElNotification({ duration: 20000, showClose: true, type: 'warning', title: `非MacOS不支持自动打开终端,请手动执行: docker exec -it ${id} bash` });
+        return;
+      }
+      res = await execCmd(`osascript -e 'tell application "Terminal" \n
+      do script "docker exec -it ${id} bash" \n
+      end tell'`);
+      ElNotification({ duration: 2000, type: 'success', title: `打开bash成功` });
+    } finally {
+      loading.close();
     }
   }
 }

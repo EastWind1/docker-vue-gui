@@ -120,7 +120,7 @@ ipcMain.handle('open-win', (_, arg) => {
 // 调用终端执行命令
 ipcMain.handle('invoke-cmd', (_, args) => {
   return new Promise((resolve, reject) => {
-    exec(args, { env: process.env }, (error, stdout, stderr) => {
+    exec(args, {encoding:'utf-8', env: process.env}, (error, stdout, stderr) => {
       if (error) {
         resolve(error.message);
       } else {

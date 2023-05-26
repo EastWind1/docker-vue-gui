@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Ref, onMounted, ref } from 'vue';
-import {listImages } from '../api/node-api';
+import {listImages,runImage } from '../api/node-api';
 import {DockerImage} from '../pojo/types';
 
 const images: Ref<DockerImage[]> = ref([]);
@@ -29,6 +29,11 @@ async function initGrid() {
     <el-table-column property="ID" label="Image ID" />
     <el-table-column property="CreatedAt" label="Created" />
     <el-table-column property="Size" label="Size" />
+    <el-table-column label="Operation">
+        <template #default="scope">
+          <el-link type="primary" @click="runImage(scope.row.ID)">Run</el-link>
+        </template>
+      </el-table-column>
   </el-table>
   </div>
 </template>

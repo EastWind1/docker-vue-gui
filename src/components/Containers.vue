@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Ref, onMounted, ref } from 'vue';
-import {listContainers } from '../api/node-api';
+import {listContainers,stopContainer,openContainerBash } from '../api/node-api';
 import {DockerContainer} from '../pojo/types';
 
 const images: Ref<DockerContainer[]> = ref([]);
@@ -13,6 +13,11 @@ onMounted(() => {
  */
 async function initGrid() {
   images.value = await listContainers();
+}
+
+async function stopContainerAndRefresh(id:string) {
+  await stopContainer(id);
+  await initGrid();
 }
 </script>
 
@@ -30,6 +35,13 @@ async function initGrid() {
     <el-table-column property="Status" label="Status" />
     <el-table-column property="Ports" label="Ports" />
     <el-table-column property="Names" label="Names" />
+    <el-table-column label="Operation">
+        <template #default="scope">
+          <el-link type="primary" @click="openContainerBash(scope.row.ID)">Bash</el-link>
+          <br/>
+          <el-link type="primary" @click="stopContainerAndRefresh(scope.row.ID)">Stop</el-link>
+        </template>
+      </el-table-column>
   </el-table>
   </div>
 </template>
