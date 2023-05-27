@@ -2,7 +2,7 @@
 import { Ref, onMounted, ref } from 'vue';
 import { searchImages, runImage } from '../api/node-api';
 import { DockerSearchedImage } from '../pojo/types';
-import { ElNotification } from 'element-plus';
+import { ElLoading, ElNotification } from 'element-plus';
 
 const images: Ref<DockerSearchedImage[]> = ref([]);
 const keyWord = ref("");
@@ -24,7 +24,14 @@ async function search() {
   if (!keyWord.value) {
     ElNotification({ duration: 5000, type: 'error', title: 'Please Enter keyword', showClose: true });
   }
-  images.value = await searchImages(keyWord.value);
+  const loading = ElLoading.service();
+  try {
+    images.value = await searchImages(keyWord.value);
+  } catch (e) {
+    throw e;
+  } finally {
+    loading.close();
+  }
 }
 
 async function runSelectImage(name: string) {

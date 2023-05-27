@@ -6,7 +6,9 @@ import { useStateStore } from '../store';
 async function execCmd(args: string): Promise<string> {
   const state = useStateStore();
   state.cmdOutput.next(args);
-  return ipcRenderer.invoke('invoke-cmd', args);
+  const res = await ipcRenderer.invoke('invoke-cmd', args);
+  state.cmdOutput.next(res);
+  return res;
 }
 /**
  * 获取docker daemon是否正在运行
@@ -16,7 +18,7 @@ export async function isDockerRunning(): Promise<boolean> {
   const state = useStateStore();
   let res = false;
   await execCmd("docker ps")
-    .then((value) => res = !value.includes("Cannot connect to the Docker daemon"));
+    .then((value) => res = !value.includes("Cannot connect"));
   return res;
 }
 /**
@@ -118,8 +120,8 @@ export async function runImage(name: string): Promise<boolean> {
  */
 export async function stopContainer(id: string): Promise<boolean> {
   const state = useStateStore();
-  if (!state.isDockerRunning) {
-    return false;
+  if (state.isDockerRunning) {
+    return true;
   }
   let res = await execCmd(`docker stop ${id}`);
 

@@ -131,11 +131,12 @@ ipcMain.handle('invoke-cmd', (_, args) => {
         }
       }
     });
-    process.stdout.on('data', (data) => {
-      win.webContents.send('cmd-output', data);
-    });
-    process.stderr.on('data', (data) => {
-      win.webContents.send('cmd-output', data);
-    });
+    // 渲染进程添加，不在发送消息
+    // process.stdout.on('data', (data) => {
+    //   win.webContents.send('cmd-output', data);
+    // });
+    // process.stderr.on('data', (data) => {
+    //   win.webContents.send('cmd-output', data);
+    // });
   });
 });

@@ -8,6 +8,9 @@ docker桌面GUI，用于学习Docker、Vue、Electron
 - vite
 - electron
 - element-plus
+- pinia
+- rxjs
+- AppleScript
 
 # 构建
 
