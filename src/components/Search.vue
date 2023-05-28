@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Ref, onMounted, ref } from 'vue';
-import { searchImages, runImage } from '../api/node-api';
+import { searchImages, runImage, pullImage } from '../api/node-api';
 import { DockerSearchedImage } from '../pojo/types';
 import { ElLoading, ElNotification } from 'element-plus';
 
@@ -34,6 +34,14 @@ async function search() {
   }
 }
 
+async function pullSelectImage(name: string) {
+  const res = await pullImage(name);
+  if (res) {
+    ElNotification({ duration: 2000, type: 'success', title: 'Image pull successful' });
+  } else {
+    ElNotification({ duration: 2000, type: 'error', title: 'Image pull failed' });
+  }
+}
 async function runSelectImage(name: string) {
   const res = await runImage(name);
   if (res) {
@@ -56,6 +64,8 @@ async function runSelectImage(name: string) {
       <el-table-column property="IsAutomated" label="Automated" />
       <el-table-column label="Operation">
         <template #default="scope">
+          <el-link type="primary" @click="pullSelectImage(scope.row.Name)">Pull</el-link>
+          <br/>
           <el-link type="primary" @click="runSelectImage(scope.row.Name)">Run</el-link>
         </template>
       </el-table-column>

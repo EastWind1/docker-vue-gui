@@ -1,5 +1,5 @@
 import { ipcRenderer } from 'electron'
-import { DockerContainer, DockerImage, DockerSearchedImage, DockerState } from '../pojo/types';
+import { DockerContainer, DockerImage, DockerSearchedImage, DockerState, ImageInfo } from '../pojo/types';
 import { useStateStore } from '../store';
 
 // 执行命令
@@ -19,6 +19,7 @@ export async function isDockerRunning(): Promise<boolean> {
   let res = false;
   await execCmd("docker ps")
     .then((value) => res = !value.includes("Cannot connect"));
+  state.isDockerRunning = res;
   return res;
 }
 /**
@@ -42,11 +43,12 @@ export async function getDockerInfo(): Promise<DockerState | null> {
  */
 export async function startColima(): Promise<boolean> {
   const state = useStateStore();
-  if (!state.isDockerRunning) {
-    return false;
+  if (state.isDockerRunning) {
+    return true;
   }
   let res = await execCmd("colima start");
   if (res || res.includes("done")) {
+    state.isDockerRunning = true;
     return true;
   } else {
     return false;
@@ -79,7 +81,7 @@ export async function listContainers(): Promise<DockerContainer[]> {
   if (!state.isDockerRunning) {
     return [];
   }
-  const json = await execCmd("docker ps --format json");
+  const json = await execCmd("docker ps -a --format json");
   const jsonArray = json.split('\n');
   const containers = [];
   for (let i = 0; i < jsonArray.length - 1; i++) {
@@ -105,6 +107,17 @@ export async function searchImages(keyWord: string): Promise<DockerSearchedImage
   return images;
 }
 /**
+ * 拉取Image
+ */
+export async function pullImage(name: string): Promise<boolean> {
+  const state = useStateStore();
+  if (!state.isDockerRunning) {
+    return false;
+  }
+  let res = await execCmd(`docker pull ${name}`);
+  return res != null && res.length != 0;
+}
+/**
  * 运行Image
  */
 export async function runImage(name: string): Promise<boolean> {
@@ -116,14 +129,49 @@ export async function runImage(name: string): Promise<boolean> {
   return res != null && res.length != 0;
 }
 /**
+ * 删除Image
+ */
+export async function removeImage(id: string): Promise<boolean> {
+  const state = useStateStore();
+  if (!state.isDockerRunning) {
+    return false;
+  }
+  let res = await execCmd(`docker image rm ${id}`);
+  return res != null && res.length != 0;
+}
+/**
+ * 启动Container
+ */
+export async function startContainer(id: string): Promise<boolean> {
+  const state = useStateStore();
+  if (!state.isDockerRunning) {
+    return false;
+  }
+  let res = await execCmd(`docker container start ${id}`);
+
+  return res != null && res.length != 0;
+}
+/**
  * 停止Container
  */
 export async function stopContainer(id: string): Promise<boolean> {
   const state = useStateStore();
-  if (state.isDockerRunning) {
-    return true;
+  if (!state.isDockerRunning) {
+    return false;
   }
   let res = await execCmd(`docker stop ${id}`);
+
+  return res != null && res.length != 0;
+}
+/**
+ * 停止删除
+ */
+export async function removeContainer(id: string): Promise<boolean> {
+  const state = useStateStore();
+  if (!state.isDockerRunning) {
+    return false;
+  }
+  let res = await execCmd(`docker container rm ${id}`);
 
   return res != null && res.length != 0;
 }
@@ -138,4 +186,18 @@ export async function openContainerBash(id: string) {
   await execCmd(`osascript -e 'tell application "Terminal" \n
       do script "docker exec -it ${id} bash" \n
       end tell'`);
+}
+/**
+ * 获取容器/镜像详情信息
+ */
+export async function getInspectInfo(id: string): Promise<ImageInfo| null> {
+  const state = useStateStore();
+  if (!state.isDockerRunning) {
+    return null;
+  }
+  const res = await execCmd(`docker inspect ${id}`);
+  if (!res) {
+    return null;
+  }
+  return JSON.parse(res)[0];
 }

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <button v-if="!state.isDockerRunning" @click="startColimaAndGetInfo">Start Colima</button>
+        <el-button v-if="!state.isDockerRunning" @click="startColimaAndGetInfo">Start Colima</el-button>
         <el-descriptions v-if="state.isDockerRunning" title="Docker Info" border>
             <el-descriptions-item label="Client Version">{{ dockerInfo?.ClientInfo.Version }}</el-descriptions-item>
             <el-descriptions-item label="Client Context">{{ dockerInfo?.ClientInfo.Context }}</el-descriptions-item>

@@ -1,17 +1,17 @@
-export type DockerImage = {
-    Containers:string,
-    CreatedAt:string,
-    CreatedSince:string,
-    Digest:string,
-    ID:string,
-    Repository:string,
-    SharedSize:string,
-    Size:string,
-    Tag:string,
-    UniqueSize:string,
-    VirtualSize:string,
+export interface DockerImage {
+    Containers: string,
+    CreatedAt: string,
+    CreatedSince: string,
+    Digest: string,
+    ID: string,
+    Repository: string,
+    SharedSize: string,
+    Size: string,
+    Tag: string,
+    UniqueSize: string,
+    VirtualSize: string,
 };
-export type DockerContainer = {
+export interface DockerContainer {
     Command: string,
     CreatedAt: string,
     ID: string,
@@ -27,20 +27,20 @@ export type DockerContainer = {
     State: string,
     Status: string
 };
-export type DockerSearchedImage = {
+export interface DockerSearchedImage {
     Description: string,
     IsAutomated: string,
     IsOfficial: string,
     Name: string,
     StarCount: string
 }
-export type DockerState = {
+export interface DockerState {
     ID: string,
-    Containers:number,
-    ContainersRunning:number,
-    ContainersPaused:number,
-    ContainersStopped:number,
-    Images:number,
+    Containers: number,
+    ContainersRunning: number,
+    ContainersPaused: number,
+    ContainersStopped: number,
+    Images: number,
     Driver: string,
     DriverStatus: string[][],
     Plugins: {
@@ -62,18 +62,18 @@ export type DockerState = {
     BridgeNfIptables: boolean,
     BridgeNfIp6tables: boolean,
     Debug: boolean,
-    NFd:number,
+    NFd: number,
     OomKillDisable: boolean,
-    NGoroutines:number,
+    NGoroutines: number,
     SystemTime: string,
     LoggingDriver: string,
     CgroupDriver: string,
     CgroupVersion: string,
-    NEventsListener:number,
+    NEventsListener: number,
     KernelVersion: string,
     OperatingSystem: string,
     OSVersion: string,
-    OSType: string,
+    OSinterface: string,
     Architecture: string,
     IndexServerAddress: string,
     RegistryConfig: {
@@ -85,15 +85,15 @@ export type DockerState = {
         IndexConfigs: {
             [key: string]: {
                 Name: string,
-                Mirrors:string[],
+                Mirrors: string[],
                 Secure: boolean,
                 Official: boolean
             }
         },
-        Mirrors:string[],
+        Mirrors: string[],
     },
-    NCPU:number,
-    MemTotal:number,
+    NCPU: number,
+    MemTotal: number,
     GenericResources: any,
     DockerRootDir: string,
     HttpProxy: string,
@@ -104,7 +104,7 @@ export type DockerState = {
     ExperimentalBuild: boolean,
     ServerVersion: string,
     Runtimes: {
-        [key: string]: {path:string}
+        [key: string]: { path: string }
     },
     DefaultRuntime: string,
     Swarm: {
@@ -149,4 +149,86 @@ export type DockerState = {
         Plugins: [],
         Warnings: any
     }
-}
+};
+export interface ImageInfo {
+    Id: string,
+    RepoTags: string[],
+    RepoDigests: string[],
+    Parent: string,
+    Comment: string,
+    Created: string,
+    Container: string,
+    ContainerConfig: {
+        Hostname: string,
+        Domainname: string,
+        User: string,
+        AttachStdin: boolean,
+        AttachStdout: boolean,
+        AttachStderr: boolean,
+        ExposedPorts: {
+            [key: string]: any
+        },
+        Tty: boolean,
+        OpenStdin: boolean,
+        StdinOnce: boolean,
+        Env: string[],
+        Cmd: string[],
+        Image: string,
+        Volumes: null,
+        WorkingDir: string,
+        Entrypoint: string[],
+        OnBuild: null,
+        Labels: {
+            [key: string]: string
+        },
+        StopSignal: string
+    },
+    DockerVersion: string,
+    Author: string,
+    Config: {
+        Hostname: string,
+        Domainname: string,
+        User: string,
+        AttachStdin: boolean,
+        AttachStdout: boolean,
+        AttachStderr: boolean,
+        ExposedPorts: {
+            [key: string]: any
+        },
+        Tty: boolean,
+        OpenStdin: boolean,
+        StdinOnce: boolean,
+        Env: string[],
+        Cmd: string[],
+        Image: string,
+        Volumes: null,
+        WorkingDir: string,
+        Entrypoint: string[],
+        OnBuild: null,
+        Labels: {
+            maintainer: string
+        },
+        StopSignal: string
+    },
+    Architecture: string,
+    Variant: string,
+    Os: string,
+    Size: number,
+    VirtualSize: number,
+    GraphDriver: {
+        Data: {
+            LowerDir: string,
+            MergedDir: string,
+            UpperDir: string,
+            WorkDir: string
+        },
+        Name: string
+    },
+    RootFS: {
+        interface: string,
+        Layers: string[],
+    },
+    Metadata: {
+        [key: string]: string
+    }
+};
