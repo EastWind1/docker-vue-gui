@@ -1,0 +1,32 @@
+#see https://www.electron.build/configuration/configuration
+appId: com.EastWInd.docker-vue-gui
+asar: true
+directories:
+  output: release/${version}
+files:
+  - dist-electron
+  - dist
+mac:
+  artifactName: ${productName}_${version}_${arch}.${ext}
+  publish:
+    - github
+  target:
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+
+linux:
+  artifactName: ${productName}_${version}.${ext}
+  publish:
+    - github
+  target:
+    - tar.xz
+win:
+  publish:
+    - github
+  target:
+    - target: zip
+      arch:
+        - x64
+  artifactName: ${productName}_${version}.${ext}
