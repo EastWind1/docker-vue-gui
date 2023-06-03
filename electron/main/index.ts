@@ -119,6 +119,9 @@ ipcMain.handle('open-win', (_, arg) => {
 
 // 调用终端执行命令
 ipcMain.handle('invoke-cmd', (_, args) => {
+  if (process.platform != 'win32') {
+    process.env.PATH += ':/usr/local/sbin:/opt/homebrew/bin:/opt/homebrew/opt/bison/bin:/opt/homebrew/sbin';
+  }
   return new Promise((resolve, reject) => {
     let process = exec(args, (error, stdout, stderr) => {
       if (error) {

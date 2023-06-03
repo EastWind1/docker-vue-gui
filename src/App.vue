@@ -21,6 +21,7 @@
 <script lang="ts" setup>
 import { Ref, onMounted, ref } from 'vue';
 import { useStateStore } from './store';
+import { useRouter } from 'vue-router';
 const state = useStateStore();
 const cmdLog = ref("");
 const showCmdLog = ref(false);
@@ -34,6 +35,9 @@ onMounted(() => {
       textarea.value.scrollTop = textarea.value.scrollHeight;
     }
   });
+  // 在打包后，el-menu的default-active不生效，手动调用
+  const router = useRouter();
+  router.push('/');
 });
 </script>
 <style scoped>
