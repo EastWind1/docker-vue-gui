@@ -27,7 +27,7 @@
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.2.3",
     "electron": "^25.0.1",
-    "electron-builder": "^23.6.0",
+    "electron-builder": "^24.4.0",
     "typescript": "^5.0.4",
     "vite": "^4.3.9",
     "vite-plugin-electron": "^0.11.2",
