@@ -1,6 +1,6 @@
 <template>
     <div>
-        <el-button v-if="!state.isDockerRunning" @click="startColimaAndGetInfo">Start Colima</el-button>
+        <el-button v-if="!state.isDockerRunning" @click="startColimaAndGetInfo">Docker daemon isn't running. Start Colima</el-button>
         <el-descriptions v-if="state.isDockerRunning" title="Docker Info" border>
             <el-descriptions-item label="Client Version">{{ dockerInfo?.ClientInfo.Version }}</el-descriptions-item>
             <el-descriptions-item label="Client Context">{{ dockerInfo?.ClientInfo.Context }}</el-descriptions-item>
@@ -10,7 +10,7 @@
             <el-descriptions-item label="Image Count">{{ dockerInfo?.Images }}</el-descriptions-item>
             <el-descriptions-item label="Architecturen">{{ dockerInfo?.Architecture }}</el-descriptions-item>
             <el-descriptions-item label="CPUs">{{ dockerInfo?.NCPU }}</el-descriptions-item>
-            <el-descriptions-item label="Total Memory">{{ dockerInfo?.MemTotal }}</el-descriptions-item>
+            <el-descriptions-item label="Total Memory">{{ Math.floor((dockerInfo?.MemTotal ? dockerInfo?.MemTotal: 0) / 1024 / 1024) }}MB</el-descriptions-item>
             <el-descriptions-item label="Registry Mirrors">{{ dockerInfo?.RegistryConfig.Mirrors }}</el-descriptions-item>
         </el-descriptions>
     </div>
